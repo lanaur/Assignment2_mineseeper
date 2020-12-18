@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Minesweeper</string>
+    <string name="btn_label">Press me</string>
 </resources>
