@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class GameBoard extends View {
@@ -109,6 +110,15 @@ public class GameBoard extends View {
         for (Tile tile : _tile_arr) {
             tile.draw(canvas);
         }
+    }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        for (Tile t : _tile_arr) {
+            if(t.containing(event.getX(), event.getY()))
+                t.set_state(true);
+        }
+        invalidate();
+        return (true);
     }
 }

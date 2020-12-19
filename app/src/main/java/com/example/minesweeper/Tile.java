@@ -11,17 +11,23 @@ public class Tile {
     private boolean _state;
     private int _mineAround;
     private Rect _bound;
-    private Paint _paint;
+    private Paint _hidPaint;
+    private Paint _minedPaint;
 
     public Tile(int id, boolean isMine, boolean state, Rect bound) {
         _id = id;
         _isMine = isMine;
         _state = state;
         _bound = bound;
-        _paint = new Paint();
-        _paint.setStyle(Paint.Style.FILL);
-        _paint.setAntiAlias(true);
-        _paint.setColor(Color.BLACK);
+        _hidPaint = new Paint();
+        _hidPaint.setStyle(Paint.Style.FILL);
+        _hidPaint.setAntiAlias(true);
+        _hidPaint.setColor(Color.BLACK);
+        _minedPaint = new Paint();
+        _minedPaint.setStyle(Paint.Style.FILL);
+        _minedPaint.setAntiAlias(true);
+        _minedPaint.setColor(Color.GRAY);
+
         _mineAround = 0;
     }
 
@@ -29,8 +35,8 @@ public class Tile {
         return _id;
     }
 
-    public boolean containing(int x, int y) {
-        return _bound.contains(x, y);
+    public boolean containing(float x, float y) {
+        return _bound.contains((int)x, (int)y);
     }
 
     public void set_bound(Rect _bound) {
@@ -62,6 +68,10 @@ public class Tile {
     }
 
     public void draw(Canvas c) {
-        c.drawRect(_bound, _paint);
+        if (_state) {
+            c.drawRect(_bound, _minedPaint);
+        } else {
+            c.drawRect(_bound, _hidPaint);
+        }
     }
 }
