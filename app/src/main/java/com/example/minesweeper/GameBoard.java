@@ -17,6 +17,10 @@ public class GameBoard extends View {
     int v_half_h;
     float size;
 
+    Tile _tile;
+
+    Tile[] _tile_arr;
+
     float sizetotal, width, height, square;
 
     public GameBoard(Context context, AttributeSet attrs) {
@@ -29,7 +33,34 @@ public class GameBoard extends View {
             a.recycle();
         }
         size = 100;
+        init_tiles();
+
     }
+
+    private void init_tiles() {
+        _tile_arr = new Tile[100];
+        int top = 0;
+        int left = 0;
+        int bottom = (int)size;
+        int right = (int)size;
+
+        int count = 0;
+
+        for (int i = 0; i < _tile_arr.length; i++) {
+            _tile_arr[i] = new Tile(i, false, false, new Rect(left, top, right, bottom));
+            left += size + size/5;
+            right += size +size/5;
+            count++;
+            if (count == 10 ) {
+                left = 0;
+                right = (int)size;
+                top += size + size/2;
+                bottom += size + size/2;
+                count = 0;
+            }
+        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -43,26 +74,41 @@ public class GameBoard extends View {
         } else {
             sizetotal = width;
         }
-        size= sizetotal/10;
+        size = sizetotal/10;
         rect = new Rect(0, 0,(int) size,(int) size);
-        setMeasuredDimension((int)sizetotal - 100, (int)sizetotal);
+        setMeasuredDimension((int)sizetotal , (int)sizetotal);
+    }
+
+    private void update_bound(){
+        int top = 0;
+        int left = 0;
+        int bottom = (int)size;
+        int right = (int)size;
+
+        int count = 0;
+
+        for (Tile tile : _tile_arr) {
+            tile.set_bound(new Rect(left, top, right, bottom));
+            left += size + size / 100;
+            right += size + size / 100;
+            count++;
+            if (count == 10) {
+                left = 0;
+                right = (int) size;
+                top += size + size / 50;
+                bottom += size + size / 50;
+                count = 0;
+            }
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        update_bound();
 
+        for (Tile tile : _tile_arr) {
+            tile.draw(canvas);
+        }
 
-        v_half_w = this.getMeasuredWidth()/2;
-        v_half_h = this.getMeasuredHeight()/2;
-        Log.d("Height:", "GameBoard: " + v_half_h);
-        Log.d("Width:", "GameBoard: " + v_half_w);
-        rect = new Rect( 20, 200 , (int)sizetotal,(int)sizetotal );
-
-        rectPaint.setStyle(Style.FILL);
-        rectPaint.setAntiAlias(true);
-        rectPaint.setColor(boardCol);
-        canvas.drawRect(rect, rectPaint);
     }
-
-
 }
