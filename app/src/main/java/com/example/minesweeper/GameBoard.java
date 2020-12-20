@@ -16,6 +16,7 @@ public class GameBoard extends View {
     private int boardCol;
     private Paint rectPaint;
     private Rect rect;
+    private boolean lost;
     int v_half_w;
     int v_half_h;
     float size;
@@ -36,7 +37,13 @@ public class GameBoard extends View {
             a.recycle();
         }
         size = 100;
+        lost = false;
         init_tiles();
+        set_mines();
+
+    }
+
+    private void set_mines() {
         for (int i = 0; i < 20; i++) {
             int rnd = new Random().nextInt(100);
             if (!_tile_arr[rnd].get_isMine()) {
@@ -169,25 +176,6 @@ public class GameBoard extends View {
                 uncover_cell(id +10);
         }
     }
-
-    /*    public void uncover_cell(int id) {
-        _tile_arr[id].set_state(true);
-        for (int i = id; i%10 != 9 && i >=0; i--) {
-            _tile_arr[i].set_state(true);
-        }
-        for (int i = id; i%10 != 0 && i < 100; i++) {
-            _tile_arr[i].set_state(true);
-        }
-        for (int i = id; i%10 != 0 && i < 100; i++) {
-            _tile_arr[i].set_state(true);
-        }
-        if (id > 9) {
-            _tile_arr[id - 10].set_state(true);
-        }
-        if (id < 90) {
-            _tile_arr[id + 10].set_state(true);
-        }
-    }*/
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
