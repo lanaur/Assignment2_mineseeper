@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.Random;
+
 public class GameBoard extends View {
     private int boardCol;
     private Paint rectPaint;
@@ -35,7 +37,39 @@ public class GameBoard extends View {
         }
         size = 100;
         init_tiles();
-
+        for (int i = 0; i < 20; i++) {
+            int rnd = new Random().nextInt(100);
+            if (!_tile_arr[rnd].get_isMine()) {
+                _tile_arr[rnd].set_isMine(true);
+                if (rnd%10 != 0) {
+                    _tile_arr[rnd-1].add_mineAround(1);
+                }
+                if (rnd%10 != 9) {
+                    _tile_arr[rnd+1].add_mineAround(1);
+                }
+                if (rnd > 9) {
+                    _tile_arr[rnd-10].add_mineAround(1);
+                    if (rnd % 10 != 0) {
+                        _tile_arr[rnd-11].add_mineAround(1);
+                    }
+                    if (rnd % 10 != 9) {
+                        _tile_arr[rnd-9].add_mineAround(1);
+                    }
+                }
+                if (rnd < 90) {
+                    _tile_arr[rnd+10].add_mineAround(1);
+                    if (rnd % 10 != 0) {
+                        _tile_arr[rnd+9].add_mineAround(1);
+                    }
+                    if (rnd % 10 != 9) {
+                        _tile_arr[rnd+11].add_mineAround(1);
+                    }
+                }
+            } else {
+                Log.d("TEST", "GameBoard: " + i);
+                i--;
+            }
+        }
     }
 
     private void init_tiles() {
@@ -77,7 +111,8 @@ public class GameBoard extends View {
         }
         size = sizetotal/10;
         rect = new Rect(0, 0,(int) size,(int) size);
-        setMeasuredDimension((int)sizetotal , (int)sizetotal);
+        update_bound();
+        setMeasuredDimension((int)sizetotal, (int)sizetotal+100);
     }
 
     private void update_bound(){
@@ -90,6 +125,7 @@ public class GameBoard extends View {
 
         for (Tile tile : _tile_arr) {
             tile.set_bound(new Rect(left, top, right, bottom));
+            tile.update_font_size((int) size);
             left += size + size / 100;
             right += size + size / 100;
             count++;
@@ -105,20 +141,63 @@ public class GameBoard extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        update_bound();
 
         for (Tile tile : _tile_arr) {
             tile.draw(canvas);
         }
     }
 
+    public void uncover_cell(int id) {
+        _tile_arr[id].set_state(true);
+        if (_tile_arr[id].get_mineAround() > 0 || _tile_arr[id].get_isMine()) {
+            return;
+        }
+        if (id%10 != 0) {
+            if (!_tile_arr[id-1].get_state() )
+                uncover_cell(id-1);
+        }
+        if (id%10 != 9) {
+            if (!_tile_arr[id+1].get_state() )
+                uncover_cell(id +1);
+        }
+        if (id > 9) {
+            if (!_tile_arr[id-10].get_state() )
+                uncover_cell(id - 10);
+        }
+        if (id < 90) {
+            if (!_tile_arr[id+10].get_state() )
+                uncover_cell(id +10);
+        }
+    }
+
+    /*    public void uncover_cell(int id) {
+        _tile_arr[id].set_state(true);
+        for (int i = id; i%10 != 9 && i >=0; i--) {
+            _tile_arr[i].set_state(true);
+        }
+        for (int i = id; i%10 != 0 && i < 100; i++) {
+            _tile_arr[i].set_state(true);
+        }
+        for (int i = id; i%10 != 0 && i < 100; i++) {
+            _tile_arr[i].set_state(true);
+        }
+        if (id > 9) {
+            _tile_arr[id - 10].set_state(true);
+        }
+        if (id < 90) {
+            _tile_arr[id + 10].set_state(true);
+        }
+    }*/
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        for (Tile t : _tile_arr) {
-            if(t.containing(event.getX(), event.getY()))
-                t.set_state(true);
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            for (Tile t : _tile_arr) {
+                if (t.containing(event.getX(), event.getY()))
+                    uncover_cell(t.get_id());
+            }
+            invalidate();
         }
-        invalidate();
         return (true);
     }
 }
