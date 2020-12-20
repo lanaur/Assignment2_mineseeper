@@ -17,6 +17,7 @@ public class GameBoard extends View {
     private Paint rectPaint;
     private Rect rect;
     private boolean lost;
+    private boolean flag;
     int v_half_w;
     int v_half_h;
     float size;
@@ -38,6 +39,7 @@ public class GameBoard extends View {
         }
         size = 100;
         lost = false;
+        flag = false;
         init_tiles();
         set_mines();
 
@@ -73,7 +75,6 @@ public class GameBoard extends View {
                     }
                 }
             } else {
-                Log.d("TEST", "GameBoard: " + i);
                 i--;
             }
         }
@@ -179,13 +180,31 @@ public class GameBoard extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && !lost) {
             for (Tile t : _tile_arr) {
-                if (t.containing(event.getX(), event.getY()))
+                if (t.containing(event.getX(), event.getY())) {
                     uncover_cell(t.get_id());
+                    if (t.get_isMine())
+                        lost = true;
+                }
             }
             invalidate();
         }
         return (true);
+    }
+
+    public void reset() {
+        for (Tile t : _tile_arr) {
+            t.set_state(false);
+            t.set_isMine(false);
+            t.set_mineAround(0);
+        }
+        lost = false;
+        set_mines();
+        invalidate();
+    }
+
+    public void toggle_flag() {
+        flag = true;
     }
 }

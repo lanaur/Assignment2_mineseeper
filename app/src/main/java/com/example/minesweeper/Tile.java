@@ -9,6 +9,7 @@ public class Tile {
     private int _id;
     private boolean _isMine;
     private boolean _state;
+    private boolean _flag;
     private int _mineAround;
     private int _size;
 
@@ -25,6 +26,7 @@ public class Tile {
         _isMine = isMine;
         _state = state;
         _bound = bound;
+        _flag = false;
         _size = 50;
 
         _blackCell = new Paint();

@@ -15,4 +15,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         _board = (GameBoard)findViewById(R.id.custView);
     }
+
+    public void reset_game(View view) {
+        _board.reset();
+    }
+
+    public void flag_mode(View view) {
+        _board.toggle_flag();
+    }
 }

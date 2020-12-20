@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Minesweeper</string>
-    <string name="btn_label">Press me</string>
+    <string name="btn_reset">Reset the game</string>
+    <string name="btn_flag">Flag mode </string>
     <string name="text_here">Text Here</string>
+    <string name="number_mine"> 20 mines</string>
+    <string name="number_flags">0 flags</string>
 </resources>
